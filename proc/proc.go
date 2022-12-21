@@ -159,7 +159,7 @@ func (svc *ServicesService) ReadProcfile(cfg config.Configuration) error {
 
 	svc.procs = []*ProcInfo{}
 	index := 0
-	for key, service := range cfg {
+	for key, service := range cfg.Services {
 		// Skip all the services that don't pass the validation (Not enabled, erroneous configuration etc.)
 		if !service.Valid() {
 			continue

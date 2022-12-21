@@ -1,6 +1,9 @@
 package config
 
 import (
+	"errors"
+	"fmt"
+	"os"
 	"strings"
 	"text/template"
 	"text/template/parse"
@@ -18,12 +21,32 @@ type Service struct {
 
 // Configuration holds a configuration, the key of the map is the name of the configuration. This is a string defined by
 // the user to differentiate the various services started.
-type Configuration map[string]Service
+type Configuration struct {
+	Services map[string]Service
+}
+
+// Create checks if a given config file already exists, if not it creates one
+func Create(path string, b []byte) (bool, error) {
+	// Create config file if it doesn't exist yet
+	if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
+		f, err := os.Create(path)
+		if err != nil {
+			return false, err
+		}
+		_, err = f.Write(b)
+		if err != nil {
+			return false, err
+		}
+		return false, fmt.Errorf("Successfully initialized. An example config file created in: %s. Use `tbm start` to give it a try based on the example config file.\n", path)
+	} else {
+		return true, nil
+	}
+}
 
 // Valid validates a full configuration. This is mainly aiming at making sure we have unique port configurations.
 func (s Configuration) Valid() bool {
 	m := make(map[string]struct{})
-	for _, service := range s {
+	for _, service := range s.Services {
 		for _, variable := range service.Variables {
 			_, ok := m[variable["port"]]
 			if ok {

@@ -130,12 +130,12 @@ func TestConfiguration_Valid(t *testing.T) {
 	}{
 		{
 			name: "two services with no overlapping port variable",
-			s:    c1,
+			s:    Configuration{Services: c1},
 			want: true,
 		},
 		{
 			name: "two services with no overlapping port variable",
-			s:    c2,
+			s:    Configuration{Services: c2},
 			want: false,
 		},
 	}

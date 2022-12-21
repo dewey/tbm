@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"github.com/dewey/tbm/config"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
@@ -20,33 +19,23 @@ var initCmd = &cobra.Command{
 			return err
 		}
 		configFilePath := path.Join(hd, ".tbm.yaml")
-		cfg := make(config.Configuration)
-		cfg["ping"] = config.Service{
+		services := make(map[string]config.Service)
+		services["ping"] = config.Service{
 			Command:     "ping google.com",
 			Environment: "prod",
 			Enable:      true,
 		}
+		cfg := config.Configuration{Services: services}
 		b, err := yaml.Marshal(cfg)
 		if err != nil {
 			return err
 		}
 
-		// Create config file if it doesn't exist yet
-		if _, err := os.Stat(configFilePath); errors.Is(err, os.ErrNotExist) {
-			f, err := os.Create(configFilePath)
-			if err != nil {
-				return err
-			}
-			_, err = f.Write(b)
-			if err != nil {
-				return err
-			}
-			cmd.Printf("Successfully initialized. An example config file created in: %s. Use `tbm start` to give it a try based on the example config file.\n", configFilePath)
-			return nil
-		} else {
+		exists, err := config.Create(configFilePath, b)
+		if exists {
 			cmd.Printf("Config file already exists in %s. Manually delete it to recreate the example config file.\n", configFilePath)
-			return nil
 		}
+		return nil
 	},
 }
 

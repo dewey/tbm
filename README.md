@@ -1,15 +1,22 @@
 # Tunnel Boring Machine (tbm)
 
-The tbm is a tool for people who frequently need a number of services running in the background. This is heavily
-inspired
-by [foreman](https://github.com/ddollar/foreman) and especially by [mattn/goreman](https://github.com/mattn/goreman).
+The focus of the project is a simple way to run multiple
+proxies like [cloud-sql-proxy](https://github.com/GoogleCloudPlatform/cloud-sql-proxy)
+, [IAP proxy](https://cloud.google.com/iap), [kubefwd](https://kubefwd.com/) or any kind of development proxy mapped to
+a specific port.
 
-The main focus of the project is a simple way to keep multiple proxies (CloudSQL Proxy, IAP proxy, Kubernetes Port
-Forwarding)
-running and mapped to a specific port. It's easy to enable or disable services without messing with the port
-configuration. This makes it easy to have a standardized configuration file in a team where people can enable / disable
+It's easy to enable or disable services without messing with the port
+configuration. This makes it easy to have a standardized and portable configuration file in a team where people can
+enable / disable
 services
-they don't need while still keeping a common port configuration.
+they don't need (or don't have permissions to) while still keeping a common port configuration. Having a standardized
+port configuration is useful to
+prevent accidents where person A maps "database-prod" to port 1234, while person B maps "database-stage" to port 1234
+and
+them sharing a curl command / script which will then hit the wrong database.
+
+This is heavily inspired
+by [foreman](https://github.com/ddollar/foreman) and especially by [mattn/goreman](https://github.com/mattn/goreman).
 
 ## Usage
 
@@ -77,4 +84,4 @@ this specific use case.
 ## Acknowledgments
 
 A big part of the code, especially around managing processes (start, stop, find, terminate) is mostly taken from
-Yasuhiro MATSUMOTO's goreman project. The license file for that is included in the `log` package.
+Yasuhiro MATSUMOTO's [goreman](https://github.com/mattn/goreman) project. The license file for that is included in the `log` package.

@@ -42,6 +42,10 @@ be started`,
 			}
 			configFilePath = path.Join(hd, ".tbm.yaml")
 		}
+		// Check if configuration file already exists, otherwise we direct the user to use `tbm init`
+		if _, err := os.Stat(configFilePath); errors.Is(err, os.ErrNotExist) {
+			return errors.New("configuration file doesn't exist. Use `tbm init` to create one or use --config to pass a path")
+		}
 		b, err := os.ReadFile(configFilePath)
 		if err != nil {
 			return err
