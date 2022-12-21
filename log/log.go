@@ -11,13 +11,14 @@ import (
 )
 
 type clogger struct {
-	idx         int
-	name        string
-	environment string
-	writes      chan []byte
-	done        chan struct{}
-	timeout     time.Duration // how long to wait before printing partial lines
-	buffers     buffers       // partial lines awaiting printing
+	idx               int
+	name              string
+	environment       string
+	maxProcNameLength int
+	writes            chan []byte
+	done              chan struct{}
+	timeout           time.Duration // how long to wait before printing partial lines
+	buffers           buffers       // partial lines awaiting printing
 }
 
 var colors = []int{
@@ -66,7 +67,7 @@ func (l *clogger) writeBuffers(line []byte) {
 	fmt.Fprintf(out, "\x1b[%dm", colors[l.idx])
 	now := time.Now().Format("15:04:05")
 	// Pretty print the environment, we remove it from the proc name again. There it only exists so services with the same name across environments are still unique.
-	fmt.Fprintf(out, "%s %*s (%s) | ", now, strings.Replace(l.name, "-"+l.environment, "", -1), l.environment)
+	fmt.Fprintf(out, "%s %*s (%s) | ", now, l.maxProcNameLength, strings.Replace(l.name, "-"+l.environment, "", -1), l.environment)
 	fmt.Fprintf(out, "\x1b[m")
 	l.buffers = append(l.buffers, line)
 	l.buffers.WriteTo(out)
@@ -125,11 +126,11 @@ func (l *clogger) Write(p []byte) (int, error) {
 	return len(p), nil
 }
 
-// CreateLogger initializes a console logger instance
-func CreateLogger(name string, environment string, colorIndex int) *clogger {
+// New initializes a new console logger instance
+func New(name string, environment string, colorIndex int, maxProcNameLength int) *clogger {
 	mutex.Lock()
 	defer mutex.Unlock()
-	l := &clogger{idx: colorIndex, name: name, environment: environment, writes: make(chan []byte), done: make(chan struct{}), timeout: 2 * time.Millisecond}
+	l := &clogger{idx: colorIndex, name: name, environment: environment, maxProcNameLength: maxProcNameLength, writes: make(chan []byte), done: make(chan struct{}), timeout: 2 * time.Millisecond}
 	go l.writeLines()
 	return l
 }

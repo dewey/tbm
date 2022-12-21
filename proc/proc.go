@@ -15,17 +15,24 @@ import (
 	"time"
 )
 
+// ServicesService is holding all the information to manage an in-memory process register
 type ServicesService struct {
+	// Configuration is the configuration read from the yaml file
 	Configuration Configuration
-	procs         []*ProcInfo
-	mu            sync.Mutex
+	// maxProcNameLength is the longest name of a proc. This is used to align the console output properly.
+	maxProcNameLength int
+	// procs is the in-memory representation of all currently running processes
+	procs []*ProcInfo
+	mu    sync.Mutex
 }
 
+// NewServicesService returns a new services service
 func NewServicesService(cfg Configuration) *ServicesService {
 	return &ServicesService{
-		Configuration: cfg,
-		procs:         []*ProcInfo{},
-		mu:            sync.Mutex{},
+		Configuration:     cfg,
+		maxProcNameLength: 0,
+		procs:             []*ProcInfo{},
+		mu:                sync.Mutex{},
 	}
 }
 
@@ -87,7 +94,7 @@ func (svc *ServicesService) FindProc(name string) *ProcInfo {
 // spawnProc starts the specified proc, and returns any error from running it.
 func (svc *ServicesService) spawnProc(name string, errCh chan<- error) {
 	proc := svc.FindProc(name)
-	logger := log.CreateLogger(name, proc.environment, proc.colorIndex)
+	logger := log.New(name, proc.environment, proc.colorIndex, svc.maxProcNameLength)
 
 	cs := append(cmdStart, proc.cmdline)
 	cmd := exec.Command(cs[0], cs[1:]...)
@@ -161,6 +168,7 @@ func (svc *ServicesService) stopProc(name string, signal os.Signal) error {
 	return err
 }
 
+// InterpolatedCommand is replacing the variable placeholders in a string with the variable value
 func (s Service) InterpolatedCommand() (string, error) {
 	var finalCommand string
 	tmpl, err := template.New("command").Parse(s.Command)
@@ -292,15 +300,18 @@ func (svc *ServicesService) ReadProcfile(cfg Configuration) error {
 		svc.procs = append(svc.procs, proc)
 		index = (index + 1) % len(colors)
 	}
+
+	if len(svc.procs) > svc.maxProcNameLength {
+		svc.maxProcNameLength = len(svc.procs)
+	}
 	if len(svc.procs) == 0 {
 		return errors.New("no valid service entry in configuration file")
 	}
 	return nil
 }
 
-// start specified proc. if proc is started already, return nil.
+// startProc a specified proc by name. If proc is started already, return nil.
 func (svc *ServicesService) startProc(name string, wg *sync.WaitGroup, errCh chan<- error) error {
-	fmt.Println("start proc")
 	proc := svc.FindProc(name)
 	if proc == nil {
 		return errors.New("unknown name: " + name)
@@ -331,18 +342,15 @@ func (svc *ServicesService) startProc(name string, wg *sync.WaitGroup, errCh cha
 func (svc *ServicesService) stopProcs(sig os.Signal) error {
 	var err error
 	for _, proc := range svc.procs {
-		fmt.Println("proc", proc)
-		fmt.Println("proc name", proc.name)
 		stopErr := svc.stopProc(proc.name, sig)
 		if stopErr != nil {
-			fmt.Println("err", err)
 			err = stopErr
 		}
 	}
 	return err
 }
 
-// spawn all procs.
+// StartProcs starts all procs in separate go routines
 func (svc *ServicesService) StartProcs(sc <-chan os.Signal, exitOnError bool, exitOnStop bool) error {
 	var wg sync.WaitGroup
 	errCh := make(chan error, 1)
@@ -380,6 +388,7 @@ const sighup = unix.SIGHUP
 var cmdStart = []string{"/bin/sh", "-c"}
 var procAttrs = &unix.SysProcAttr{Setpgid: true}
 
+// terminateProc is killing a proc by pid
 func terminateProc(proc *ProcInfo, signal os.Signal) error {
 	p := proc.cmd.Process
 	if p == nil {
