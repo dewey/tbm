@@ -2,7 +2,6 @@ package config
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"strings"
 	"text/template"
@@ -37,7 +36,7 @@ func Create(path string, b []byte) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		return false, fmt.Errorf("Successfully initialized. An example config file created in: %s. Use `tbm start` to give it a try based on the example config file.\n", path)
+		return false, nil
 	} else {
 		return true, nil
 	}

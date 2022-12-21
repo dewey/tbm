@@ -88,10 +88,6 @@ be started`,
 func init() {
 	rootCmd.AddCommand(startCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
 	var configFilePath string
 	hd, err := os.UserHomeDir()
 	if err == nil {
@@ -103,8 +99,4 @@ func init() {
 	startCmd.PersistentFlags().String("config", configFilePath, "Location of the configuration file.")
 	startCmd.PersistentFlags().Bool("exit-on-stop", true, "Exit tbm if all services stop")
 	startCmd.PersistentFlags().Bool("exit-on-error", true, "Exit tbm if one of the services encounters an error")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// startCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
