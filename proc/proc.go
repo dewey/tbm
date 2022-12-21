@@ -9,6 +9,8 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -62,6 +64,11 @@ type ProcInfo struct {
 	waitErr error
 }
 
+// Procs returns all initialized procs
+func (svc *ServicesService) Procs() []*ProcInfo {
+	return svc.procs
+}
+
 // FindProc returns a single proc object from the in-memory object, selected by name
 func (svc *ServicesService) FindProc(name string) *ProcInfo {
 	svc.mu.Lock()
@@ -75,21 +82,29 @@ func (svc *ServicesService) FindProc(name string) *ProcInfo {
 	return nil
 }
 
+func (p *ProcInfo) ClearName() string {
+	return ProcClearName(p.name, p.environment)
+}
+
+// ProcClearName returns the clear service name of a proc
+func ProcClearName(name string, environment string) string {
+	return strings.Replace(name, "-"+environment, "", -1)
+}
+
 // spawnProc starts the specified proc, and returns any error from running it.
 func (svc *ServicesService) spawnProc(name string, errCh chan<- error) {
-	proc := svc.FindProc(name)
-	logger := log.New(name, proc.environment, proc.colorIndex, svc.maxProcNameLength)
+	cproc := svc.FindProc(name)
+	logger := log.New(name, cproc.environment, cproc.colorIndex, svc.maxProcNameLength)
 
-	cs := append(cmdStart, proc.cmdline)
+	cs := append(cmdStart, cproc.cmdline)
 	cmd := exec.Command(cs[0], cs[1:]...)
 	cmd.Stdin = nil
 	cmd.Stdout = logger
 	cmd.Stderr = logger
 	cmd.SysProcAttr = procAttrs
 
-	if proc.setPort {
-		cmd.Env = append(os.Environ(), fmt.Sprintf("PORT=%d", proc.port))
-		fmt.Fprintf(logger, "Starting %s on port %d\n", name, proc.port)
+	if cproc.setPort {
+		fmt.Fprintf(logger, "Starting %s on port %d\n", cproc.ClearName(), cproc.port)
 	}
 	if err := cmd.Start(); err != nil {
 		select {
@@ -99,20 +114,20 @@ func (svc *ServicesService) spawnProc(name string, errCh chan<- error) {
 		fmt.Fprintf(logger, "Failed to start %s: %s\n", name, err)
 		return
 	}
-	proc.cmd = cmd
-	proc.stoppedBySupervisor = false
-	proc.mu.Unlock()
+	cproc.cmd = cmd
+	cproc.stoppedBySupervisor = false
+	cproc.mu.Unlock()
 	err := cmd.Wait()
-	proc.mu.Lock()
-	proc.cond.Broadcast()
-	if err != nil && !proc.stoppedBySupervisor {
+	cproc.mu.Lock()
+	cproc.cond.Broadcast()
+	if err != nil && !cproc.stoppedBySupervisor {
 		select {
 		case errCh <- err:
 		default:
 		}
 	}
-	proc.waitErr = err
-	proc.cmd = nil
+	cproc.waitErr = err
+	cproc.cmd = nil
 	fmt.Fprintf(logger, "Terminating %s\n", name)
 }
 
@@ -169,11 +184,21 @@ func (svc *ServicesService) ReadProcfile(cfg config.Configuration) error {
 		if err != nil {
 			return err
 		}
+
 		proc := &ProcInfo{
 			name:        fmt.Sprintf("%s-%s", key, service.Environment),
 			environment: service.Environment,
 			cmdline:     cmd,
 			colorIndex:  index,
+		}
+		exists, val := service.VariableValue("port")
+		if exists {
+			i, err := strconv.Atoi(val)
+			if err != nil {
+				return err
+			}
+			proc.port = uint(i)
+			proc.setPort = true
 		}
 		proc.cond = sync.NewCond(&proc.mu)
 		svc.procs = append(svc.procs, proc)

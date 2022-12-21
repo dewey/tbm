@@ -24,6 +24,18 @@ type Configuration struct {
 	Services map[string]Service
 }
 
+func (s Service) VariableValue(name string) (bool, string) {
+	if s.Variables == nil {
+		return false, ""
+	}
+	for _, variable := range s.Variables {
+		if _, ok := variable[name]; ok {
+			return true, variable[name]
+		}
+	}
+	return false, ""
+}
+
 // Create checks if a given config file already exists, if not it creates one
 func Create(path string, b []byte) (bool, error) {
 	// Create config file if it doesn't exist yet
