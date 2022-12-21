@@ -20,6 +20,22 @@ type Service struct {
 // the user to differentiate the various services started.
 type Configuration map[string]Service
 
+// Valid validates a full configuration. This is mainly aiming at making sure we have unique port configurations.
+func (s Configuration) Valid() bool {
+	m := make(map[string]struct{})
+	for _, service := range s {
+		for _, variable := range service.Variables {
+			_, ok := m[variable["port"]]
+			if ok {
+				return false
+			} else {
+				m[variable["port"]] = struct{}{}
+			}
+		}
+	}
+	return true
+}
+
 // InterpolatedCommand is replacing the variable placeholders in a string with the variable value
 func (s Service) InterpolatedCommand() (string, error) {
 	var finalCommand string

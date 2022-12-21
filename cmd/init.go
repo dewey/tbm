@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"errors"
-	"github.com/dewey/tbm/proc"
+	"github.com/dewey/tbm/config"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 	"os"
@@ -20,8 +20,8 @@ var initCmd = &cobra.Command{
 			return err
 		}
 		configFilePath := path.Join(hd, ".tbm.yaml")
-		cfg := make(proc.Configuration)
-		cfg["ping"] = proc.Service{
+		cfg := make(config.Configuration)
+		cfg["ping"] = config.Service{
 			Command:     "ping google.com",
 			Environment: "prod",
 			Enable:      true,

@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"errors"
+	"github.com/dewey/tbm/config"
 	"github.com/dewey/tbm/proc"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
@@ -25,15 +26,15 @@ be started`,
 
 		// If user provided a custom config file location, we read it from there. Otherwise, we are using the default
 		// location in the user's home directory.
-		config := cmd.Flag("config")
+		configFlag := cmd.Flag("config")
 		var configFilePath string
-		if config.Value.String() != config.DefValue {
+		if configFlag.Value.String() != configFlag.DefValue {
 			// Replace tilde in user provided string, otherwise we can't resolve it
 			hd, err := os.UserHomeDir()
 			if err != nil {
 				return err
 			}
-			configFilePath = strings.Replace(config.Value.String(), "~", hd, -1)
+			configFilePath = strings.Replace(configFlag.Value.String(), "~", hd, -1)
 		} else {
 			hd, err := os.UserHomeDir()
 			if err != nil {
@@ -45,9 +46,13 @@ be started`,
 		if err != nil {
 			return err
 		}
-		var configuration proc.Configuration
+		var configuration config.Configuration
 		if err := yaml.Unmarshal(b, &configuration); err != nil {
 			return err
+		}
+
+		if !configuration.Valid() {
+			return errors.New("invalid configuration file, make sure ports are unique across services")
 		}
 
 		svc := proc.NewServicesService(configuration)

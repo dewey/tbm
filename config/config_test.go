@@ -3,6 +3,8 @@ package config
 import (
 	"reflect"
 	"testing"
+	"text/template"
+	"text/template/parse"
 )
 
 func Test_extractVariables(t *testing.T) {
@@ -89,6 +91,189 @@ func TestService_Valid(t *testing.T) {
 			}
 			if got := s.Valid(); got != tt.want {
 				t.Errorf("Valid() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestConfiguration_Valid(t *testing.T) {
+	// Configuration with two services
+	c1 := make(map[string]Service)
+
+	// Variable 1
+	v1 := make(map[string]string)
+	v1["port"] = "1234"
+
+	// Variable 2
+	v2 := make(map[string]string)
+	v2["port"] = "5678"
+
+	c1["service-1"] = Service{
+		Variables: []map[string]string{v1},
+	}
+	c1["service-2"] = Service{
+		Variables: []map[string]string{v2},
+	}
+
+	c2 := make(map[string]Service)
+	c2["service-1"] = Service{
+		Variables: []map[string]string{v1},
+	}
+	c2["service-2"] = Service{
+		Variables: []map[string]string{v1},
+	}
+
+	tests := []struct {
+		name string
+		s    Configuration
+		want bool
+	}{
+		{
+			name: "two services with no overlapping port variable",
+			s:    c1,
+			want: true,
+		},
+		{
+			name: "two services with no overlapping port variable",
+			s:    c2,
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.s.Valid(); got != tt.want {
+				t.Errorf("Valid() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestListTemplateFields(t *testing.T) {
+	type args struct {
+		t *template.Template
+	}
+	tests := []struct {
+		name string
+		args args
+		want []string
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ListTemplateFields(tt.args.t); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ListTemplateFields() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestService_InterpolatedCommand(t *testing.T) {
+	type fields struct {
+		Command     string
+		Environment string
+		Enable      bool
+		Variables   []map[string]string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		want    string
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := Service{
+				Command:     tt.fields.Command,
+				Environment: tt.fields.Environment,
+				Enable:      tt.fields.Enable,
+				Variables:   tt.fields.Variables,
+			}
+			got, err := s.InterpolatedCommand()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("InterpolatedCommand() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("InterpolatedCommand() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestService_Valid1(t *testing.T) {
+	type fields struct {
+		Command     string
+		Environment string
+		Enable      bool
+		Variables   []map[string]string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := Service{
+				Command:     tt.fields.Command,
+				Environment: tt.fields.Environment,
+				Enable:      tt.fields.Enable,
+				Variables:   tt.fields.Variables,
+			}
+			if got := s.Valid(); got != tt.want {
+				t.Errorf("Valid() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_extractVariables1(t *testing.T) {
+	type args struct {
+		command string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    []string
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := extractVariables(tt.args.command)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("extractVariables() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("extractVariables() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_listNodeFields(t *testing.T) {
+	type args struct {
+		node parse.Node
+		res  []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want []string
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := listNodeFields(tt.args.node, tt.args.res); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("listNodeFields() = %v, want %v", got, tt.want)
 			}
 		})
 	}
