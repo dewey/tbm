@@ -14,7 +14,7 @@ import (
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
-	Short: "Start all services",
+	Short: "Start all enabled services",
 	Long: `Start all services that are enabled in the configuration file. Only services with a valid configuration will
 be started`,
 	RunE: func(cmd *cobra.Command, args []string) error {
