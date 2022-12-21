@@ -1,8 +1,7 @@
 # Tunnel Boring Machine (tbm)
 
 The focus of the project is a simple way to run multiple
-proxies like [cloud-sql-proxy](https://github.com/GoogleCloudPlatform/cloud-sql-proxy)
-, [IAP proxy](https://cloud.google.com/iap), [kubefwd](https://kubefwd.com/) or any kind of development proxy mapped to
+proxies like [cloud-sql-proxy](https://github.com/GoogleCloudPlatform/cloud-sql-proxy), [IAP proxy](https://cloud.google.com/iap), [kubefwd](https://kubefwd.com/) or any kind of development proxy mapped to
 a specific port.
 
 It's easy to enable or disable services without messing with the port
