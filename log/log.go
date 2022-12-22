@@ -70,6 +70,7 @@ func (l *clogger) writeBuffers(line []byte) {
 	fmt.Fprintf(out, "%s %*s (%s) | ", now, l.maxProcNameLength, strings.Replace(l.name, "-"+l.environment, "", -1), l.environment)
 	fmt.Fprintf(out, "\x1b[m")
 	l.buffers = append(l.buffers, line)
+	//nolint
 	l.buffers.WriteTo(out)
 	l.buffers = l.buffers[0:0]
 	mutex.Unlock()
