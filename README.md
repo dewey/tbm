@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img height="500" src="docs/header.jpg" alt="header image for tbm, a picture of a gopher looking out of a tunnel">
+  <img src="docs/header-small.jpg" alt="header image for tbm, a picture of a gopher looking out of a tunnel">
 </p>
 
 # Tunnel Boring Machine (tbm)
@@ -23,10 +23,9 @@ by [foreman](https://github.com/ddollar/foreman) and especially by [mattn/gorema
 
 ## Usage
 
-On first usage you should run `tbm init` to create a new configuration file at the default location (`~/.tbm.yaml`).
+On first usage run `tbm init` to create a new configuration file at the default location (`~/.tbm.yaml`). You can also init based on a remote configuration file with `init --config-url https://example.com/company-default.yaml`, this will download the remote file instead of creating a default configuration.
 
-After that you can run `tbm start` to start all the default services to see how everything works in practice. The next
-step is to adapt the configuration file and add all your services.
+After that run `tbm start` to start the services defined by your configuration file to see how everything works in practice.
 
 Run `tbm help` to get an overview over the available commands.
 
@@ -44,8 +43,7 @@ brew install tbm
 
 #### Location
 
-The configuration is stored in a simple YAML file in the user's home directory by default. The default name
-is `~/.tbm.yaml`.
+The configuration is stored in a simple YAML file in the user's home directory by default. The default name is `~/.tbm.yaml`.
 
 A custom configuration location can be defined with the config flag `tbm start --config ~/myconfigs/tbm.yaml`. More
 information about this command can be found with `tbm start --help`.
