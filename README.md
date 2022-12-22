@@ -23,7 +23,7 @@ by [foreman](https://github.com/ddollar/foreman) and especially by [mattn/gorema
 
 ## Usage
 
-On first usage run `tbm init` to create a new configuration file at the default location (`~/.tbm.yaml`). You can also init based on a remote configuration file with `init --config-url https://example.com/company-default.yaml`, this will download the remote file instead of creating a default configuration.
+On first usage run `tbm init` to create a new configuration file at the default location (`~/.tbm.yaml`). You can also init based on a remote configuration file with `tbm init --config-url https://example.com/company-default.yaml`, this will download the remote file instead of creating a default configuration.
 
 After that run `tbm start` to start the services defined by your configuration file to see how everything works in practice.
 
