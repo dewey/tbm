@@ -26,7 +26,7 @@ step is to adapt the configuration file and add all your services.
 
 Run `tbm help` to get an overview over the available commands.
 
-![Screenshot of a terminal with tbm running two ping commands concurrently](/screenshot.png "Example of tbm running two ping commands")
+![Screenshot of a terminal with tbm running two ping commands concurrently](/docs/screenshot.png "Example of tbm running two ping commands")
 
 ### Configuration
 
