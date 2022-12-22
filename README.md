@@ -5,21 +5,21 @@
 
 # Tunnel Boring Machine (tbm)
 
-A simple way to run multiple
-proxies like [cloud-sql-proxy](https://github.com/GoogleCloudPlatform/cloud-sql-proxy), [IAP proxy](https://cloud.google.com/iap), [kubefwd](https://kubefwd.com/) in the background.
+A simple way to start multiple services like [cloud-sql-proxy](https://github.com/GoogleCloudPlatform/cloud-sql-proxy), [IAP proxy](https://cloud.google.com/iap), [kubefwd](https://kubefwd.com/) or any other command really at once and keep them running in the background.
 
-It's easy to enable or disable services without messing with the port
-configuration. This makes it easy to have a standardized and portable configuration file in a team where people can
-enable / disable
-services
-they don't need (or don't have permissions to) while still keeping a common port configuration. Having a standardized
-port configuration is useful to
-prevent accidents where person A maps "database-prod" to port 1234, while person B maps "database-stage" to port 1234
-and
-them sharing a curl command / script which will then hit the wrong database.
+This is heavily inspired by [foreman](https://github.com/ddollar/foreman) and especially by [mattn/goreman](https://github.com/mattn/goreman) and adds features I missed from these projects:
 
-This is heavily inspired
-by [foreman](https://github.com/ddollar/foreman) and especially by [mattn/goreman](https://github.com/mattn/goreman).
+✅ Enable / disable services
+✅ Easily use shared config file
+✅ Organize by environment (prod/stage/develop)
+
+## Why & Motivation
+
+If you are using proxies and port forwarding commands for development these ports are often hardcoded in apps like database clients, Makefiles or environment variables.
+
+These informal conventions open the door for accidents where person A maps "database-prod" to port 1234, while person B maps "database-stage" to port 1234. Then sharing a Makefile or curl command could very easily hit the wrong database without being obvious at first.
+
+Having a common and portable configuration in a team where people can enable or disable services they don't need (or don't have permissions to) solves this issue.
 
 ## Usage
 
@@ -78,19 +78,8 @@ cloudsql-db-replica:
     - port: 10002
 ```
 
-## Motivation
-
-In my daily life as a developer there's a number of services that I have to keep running (CloudSQL proxy to access
-databases running in Google Cloud Platform), a company specific "devproxy" which tunnels specific traffic through an IAP
-proxy that provides authentication in front of services running in Kubernetes and
-various [port forwarding](https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/)
-commands to access services in Kubernetes directly.
-
-There's other projects that can take care of this too, but I haven't found one where I can easily define a bunch of
-services, enable, disable them and set a pre-defined port where they are mapped to localhost. This project covers for
-this specific use case.
 
 ## Acknowledgments
 
 A big part of the code, especially around managing processes (start, stop, find, terminate) is mostly taken from
-Yasuhiro MATSUMOTO's [goreman](https://github.com/mattn/goreman) project. The license file for that is included in the `log` package.
+Yasuhiro Matsumoto's [goreman](https://github.com/mattn/goreman) project. The license file for that is included in the `log` package.
