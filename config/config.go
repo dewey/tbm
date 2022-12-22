@@ -131,7 +131,7 @@ func (s Service) Valid() bool {
 	return true
 }
 
-// extractVariables parses a command template and returns the Go template variables that were used
+// extractVariables parses a command template and returns the unique Go template variables that were used
 func extractVariables(command string) ([]string, error) {
 	tmpl, err := template.New("command").Parse(command)
 	if err != nil {
@@ -144,7 +144,16 @@ func extractVariables(command string) ([]string, error) {
 		variables[i] = strings.Replace(variables[i], ".", "", -1)
 		variables[i] = strings.ToLower(variables[i])
 	}
-	return variables, nil
+	m := make(map[string]struct{})
+	var variablesDeduplicated []string
+	for _, variable := range variables {
+		if _, ok := m[variable]; !ok {
+			m[variable] = struct{}{}
+			variablesDeduplicated = append(variablesDeduplicated, variable)
+		}
+	}
+
+	return variablesDeduplicated, nil
 }
 
 // ListTemplateFields lists the fields used in a template. Sourced and adapted from: https://stackoverflow.com/a/40584967
