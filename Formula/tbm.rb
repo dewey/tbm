@@ -5,13 +5,13 @@
 class Tbm < Formula
   desc "Software to create fast and easy drum rolls."
   homepage "https://github.com/dewey/tbm"
-  version "0.0.3"
+  version "0.0.4"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/dewey/tbm/releases/download/v0.0.3/tbm_0.0.3_Darwin_arm64.tar.gz"
-      sha256 "a356619382f34fae7d4537dd30eeecba15c0ab34ad9aacb4e7481549d14ae661"
+      url "https://github.com/dewey/tbm/releases/download/v0.0.4/tbm_0.0.4_Darwin_arm64.tar.gz"
+      sha256 "9399114b55e7fc925213388da7fa686bcfdd47f970f176e9174311ea19a1d82f"
 
       def install
         bin.install "tbm"
@@ -21,8 +21,8 @@ class Tbm < Formula
 
   on_linux do
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/dewey/tbm/releases/download/v0.0.3/tbm_0.0.3_Linux_arm64.tar.gz"
-      sha256 "d49c40a59157849feaffa646b0600b9d2017d874358c63cbcfc4a64f77b6da02"
+      url "https://github.com/dewey/tbm/releases/download/v0.0.4/tbm_0.0.4_Linux_arm64.tar.gz"
+      sha256 "bb1ef7c618079129fe59a0a9d8e7e85ff53baf2219221d49c83a20402f92632f"
 
       def install
         bin.install "tbm"
