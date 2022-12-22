@@ -22,7 +22,7 @@ type ServicesService struct {
 	// maxProcNameLength is the longest name of a proc. This is used to align the console output properly.
 	maxProcNameLength int
 	// procs is the in-memory representation of all currently running processes
-	procs []*ProcInfo
+	procs []*Info
 	mu    sync.Mutex
 }
 
@@ -31,7 +31,7 @@ func NewServicesService(cfg config.Configuration) *ServicesService {
 	return &ServicesService{
 		Configuration:     cfg,
 		maxProcNameLength: 0,
-		procs:             []*ProcInfo{},
+		procs:             []*Info{},
 		mu:                sync.Mutex{},
 	}
 }
@@ -45,8 +45,8 @@ var colors = []int{
 	31, // red
 }
 
-// ProcInfo defines the structure of a single process
-type ProcInfo struct {
+// Info defines the structure of a single process
+type Info struct {
 	name        string
 	environment string
 	cmdline     string
@@ -65,12 +65,12 @@ type ProcInfo struct {
 }
 
 // Procs returns all initialized procs
-func (svc *ServicesService) Procs() []*ProcInfo {
+func (svc *ServicesService) Procs() []*Info {
 	return svc.procs
 }
 
 // FindProc returns a single proc object from the in-memory object, selected by name
-func (svc *ServicesService) FindProc(name string) *ProcInfo {
+func (svc *ServicesService) FindProc(name string) *Info {
 	svc.mu.Lock()
 	defer svc.mu.Unlock()
 
@@ -82,7 +82,7 @@ func (svc *ServicesService) FindProc(name string) *ProcInfo {
 	return nil
 }
 
-func (p *ProcInfo) ClearName() string {
+func (p *Info) ClearName() string {
 	return ProcClearName(p.name, p.environment)
 }
 
@@ -97,6 +97,7 @@ func (svc *ServicesService) spawnProc(name string, errCh chan<- error) {
 	logger := log.New(name, cproc.environment, cproc.colorIndex, svc.maxProcNameLength)
 
 	cs := append(cmdStart, cproc.cmdline)
+	//nolint:gosec
 	cmd := exec.Command(cs[0], cs[1:]...)
 	cmd.Stdin = nil
 	cmd.Stdout = logger
@@ -172,7 +173,7 @@ func (svc *ServicesService) ReadProcfile(cfg config.Configuration) error {
 	svc.mu.Lock()
 	defer svc.mu.Unlock()
 
-	svc.procs = []*ProcInfo{}
+	svc.procs = []*Info{}
 	index := 0
 	for key, service := range cfg.Services {
 		// Skip all the services that don't pass the validation (Not enabled, erroneous configuration etc.)
@@ -185,7 +186,7 @@ func (svc *ServicesService) ReadProcfile(cfg config.Configuration) error {
 			return err
 		}
 
-		proc := &ProcInfo{
+		proc := &Info{
 			name:        fmt.Sprintf("%s-%s", key, service.Environment),
 			environment: service.Environment,
 			cmdline:     cmd,
@@ -297,7 +298,7 @@ var cmdStart = []string{"/bin/sh", "-c"}
 var procAttrs = &unix.SysProcAttr{Setpgid: true}
 
 // terminateProc is killing a proc by pid
-func terminateProc(proc *ProcInfo, signal os.Signal) error {
+func terminateProc(proc *Info, signal os.Signal) error {
 	p := proc.cmd.Process
 	if p == nil {
 		return nil

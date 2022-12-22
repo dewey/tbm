@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-type clogger struct {
+type Clogger struct {
 	idx               int
 	name              string
 	environment       string
@@ -62,7 +62,7 @@ func (v *buffers) WriteTo(w io.Writer) (n int64, err error) {
 
 // write any stored buffers, plus the given line, then empty out
 // the buffers.
-func (l *clogger) writeBuffers(line []byte) {
+func (l *Clogger) writeBuffers(line []byte) {
 	mutex.Lock()
 	fmt.Fprintf(out, "\x1b[%dm", colors[l.idx])
 	now := time.Now().Format("15:04:05")
@@ -77,7 +77,7 @@ func (l *clogger) writeBuffers(line []byte) {
 }
 
 // bundle writes into lines, waiting briefly for completion of lines
-func (l *clogger) writeLines() {
+func (l *Clogger) writeLines() {
 	var tick <-chan time.Time
 	for {
 		select {
@@ -121,17 +121,17 @@ func (l *clogger) writeLines() {
 }
 
 // write handler of logger.
-func (l *clogger) Write(p []byte) (int, error) {
+func (l *Clogger) Write(p []byte) (int, error) {
 	l.writes <- p
 	<-l.done
 	return len(p), nil
 }
 
 // New initializes a new console logger instance
-func New(name string, environment string, colorIndex int, maxProcNameLength int) *clogger {
+func New(name string, environment string, colorIndex int, maxProcNameLength int) *Clogger {
 	mutex.Lock()
 	defer mutex.Unlock()
-	l := &clogger{idx: colorIndex, name: name, environment: environment, maxProcNameLength: maxProcNameLength, writes: make(chan []byte), done: make(chan struct{}), timeout: 2 * time.Millisecond}
+	l := &Clogger{idx: colorIndex, name: name, environment: environment, maxProcNameLength: maxProcNameLength, writes: make(chan []byte), done: make(chan struct{}), timeout: 2 * time.Millisecond}
 	go l.writeLines()
 	return l
 }

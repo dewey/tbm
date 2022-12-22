@@ -49,9 +49,8 @@ func Create(path string, b []byte) (bool, error) {
 			return false, err
 		}
 		return false, nil
-	} else {
-		return true, nil
 	}
+	return true, nil
 }
 
 // Valid validates a full configuration. This is mainly aiming at making sure we have unique port configurations.
