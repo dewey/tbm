@@ -21,7 +21,7 @@ be started`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		c := proc.NotifyCh()
 		ctx := context.Background()
-		ctx, cancel := context.WithCancel(ctx)
+		_, cancel := context.WithCancel(ctx)
 		defer cancel()
 
 		// If user provided a custom config file location, we read it from there. Otherwise, we are using the default

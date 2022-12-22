@@ -260,7 +260,9 @@ func (svc *ServicesService) StartProcs(sc <-chan os.Signal, exitOnError bool, ex
 	errCh := make(chan error, 1)
 
 	for _, proc := range svc.procs {
-		svc.startProc(proc.name, &wg, errCh)
+		if err := svc.startProc(proc.name, &wg, errCh); err != nil {
+			continue
+		}
 	}
 
 	allProcsDone := make(chan struct{}, 1)
@@ -274,7 +276,9 @@ func (svc *ServicesService) StartProcs(sc <-chan os.Signal, exitOnError bool, ex
 		select {
 		case err := <-errCh:
 			if exitOnError {
-				svc.stopProcs(os.Interrupt)
+				if errStopping := svc.stopProcs(os.Interrupt); errStopping != nil {
+					return errStopping
+				}
 				return err
 			}
 		case <-allProcsDone:

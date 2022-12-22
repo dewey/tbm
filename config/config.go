@@ -119,7 +119,7 @@ func (s Service) Valid() bool {
 		}
 	}
 	for _, variable := range s.Variables {
-		for key, _ := range variable {
+		for key := range variable {
 			if val, ok := vm[key]; ok {
 				if vm[key] != val {
 					return false
@@ -140,7 +140,7 @@ func extractVariables(command string) ([]string, error) {
 		return nil, err
 	}
 	variables := ListTemplateFields(tmpl)
-	for i, _ := range variables {
+	for i := range variables {
 		variables[i] = strings.Replace(variables[i], "{{", "", -1)
 		variables[i] = strings.Replace(variables[i], "}}", "", -1)
 		variables[i] = strings.Replace(variables[i], ".", "", -1)
