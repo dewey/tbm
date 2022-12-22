@@ -9,9 +9,9 @@ A simple way to start multiple services like [cloud-sql-proxy](https://github.co
 
 This is heavily inspired by [foreman](https://github.com/ddollar/foreman) and especially by [mattn/goreman](https://github.com/mattn/goreman) and adds features I missed from these projects:
 
-✅ Enable / disable services
-✅ Easily use shared config file
-✅ Organize by environment (prod/stage/develop)
+✅ Enable / disable services  
+✅ Use remote template configuration    
+✅ Organize by environment (prod/stage/develop)  
 
 ## Why & Motivation
 
