@@ -1,8 +1,12 @@
+
+<p align="center">
+  <img height="500" src="docs/header.jpg" alt="header image for tbm, a picture of a gopher looking out of a tunnel">
+</p>
+
 # Tunnel Boring Machine (tbm)
 
-The focus of the project is a simple way to run multiple
-proxies like [cloud-sql-proxy](https://github.com/GoogleCloudPlatform/cloud-sql-proxy), [IAP proxy](https://cloud.google.com/iap), [kubefwd](https://kubefwd.com/) or any kind of development proxy mapped to
-a specific port.
+A simple way to run multiple
+proxies like [cloud-sql-proxy](https://github.com/GoogleCloudPlatform/cloud-sql-proxy), [IAP proxy](https://cloud.google.com/iap), [kubefwd](https://kubefwd.com/) in the background.
 
 It's easy to enable or disable services without messing with the port
 configuration. This makes it easy to have a standardized and portable configuration file in a team where people can
@@ -27,6 +31,14 @@ step is to adapt the configuration file and add all your services.
 Run `tbm help` to get an overview over the available commands.
 
 ![Screenshot of a terminal with tbm running two ping commands concurrently](/docs/screenshot.png "Example of tbm running two ping commands")
+
+## Install
+You can either install from source or use Homebrew on macOS.
+
+```
+brew tap dewey/tbm https://github.com/dewey/tbm
+brew install tbm
+```
 
 ### Configuration
 
