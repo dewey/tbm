@@ -64,18 +64,19 @@ The configuration file can contain the following keys.
 Example file with two services defined:
 
 ```yaml
-cloudsql-db:
-  command: cloud_sql_proxy -instances=europe-west1:prod-db=tcp:0.0.0.0:{{.port}}
-  environment: prod
-  enable: true
-  variables:
-    - port: 10001
-cloudsql-db-replica:
-  command: cloud_sql_proxy -instances=europe-west1:prod-db-replica=tcp:0.0.0.0:{{.port}}
-  environment: prod
-  enable: true
-  variables:
-    - port: 10002
+services:
+    cloudsql-db:
+      command: cloud_sql_proxy -instances=europe-west1:prod-db=tcp:0.0.0.0:{{.port}}
+      environment: prod
+      enable: true
+      variables:
+        - port: 10001
+    cloudsql-db-replica:
+      command: cloud_sql_proxy -instances=europe-west1:prod-db-replica=tcp:0.0.0.0:{{.port}}
+      environment: prod
+      enable: true
+      variables:
+        - port: 10002
 ```
 
 
