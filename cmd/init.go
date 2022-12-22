@@ -52,9 +52,14 @@ var initCmd = &cobra.Command{
 			}
 			configFilePath := path.Join(hd, ".tbm.yaml")
 			services := make(map[string]config.Service)
-			services["ping"] = config.Service{
+			services["ping-one"] = config.Service{
 				Command:     "ping google.com",
 				Environment: "prod",
+				Enable:      true,
+			}
+			services["ping-two"] = config.Service{
+				Command:     "ping duckduckgo.com",
+				Environment: "stage",
 				Enable:      true,
 			}
 			cfg = config.Configuration{Services: services}
