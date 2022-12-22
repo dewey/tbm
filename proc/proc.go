@@ -83,11 +83,11 @@ func (svc *ServicesService) FindProc(name string) *Info {
 }
 
 func (p *Info) ClearName() string {
-	return ProcClearName(p.name, p.environment)
+	return ClearName(p.name, p.environment)
 }
 
-// ProcClearName returns the clear service name of a proc
-func ProcClearName(name string, environment string) string {
+// ClearName returns the clear service name of a proc
+func ClearName(name string, environment string) string {
 	return strings.Replace(name, "-"+environment, "", -1)
 }
 

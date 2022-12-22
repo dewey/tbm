@@ -61,9 +61,8 @@ func (s Configuration) Valid() bool {
 			_, ok := m[variable["port"]]
 			if ok {
 				return false
-			} else {
-				m[variable["port"]] = struct{}{}
 			}
+			m[variable["port"]] = struct{}{}
 		}
 	}
 	return true
