@@ -5,21 +5,21 @@
 class Tbm < Formula
   desc "A simple way to start multiple services like cloud-sql-proxy, IAP proxy, kubefwd or any other command really at once and keep them running in the background."
   homepage "https://github.com/dewey/tbm"
-  version "0.0.7"
+  version "0.0.6"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/dewey/tbm/releases/download/v0.0.7/tbm_0.0.7_darwin_arm64.tar.gz"
-      sha256 "e6261f0b91e9e89005fe9fa4d15d57bb2e4a0f0caf329ae77f68d5a7904195ff"
+      url "https://github.com/dewey/tbm/releases/download/v0.0.6/tbm_0.0.6_Darwin_arm64.tar.gz"
+      sha256 "b02c3056d21a677f1477cd20b20431692f0f83a5d6f9944f709bf5fb62e3483d"
 
       def install
         bin.install "tbm"
       end
     end
     if Hardware::CPU.intel?
-      url "https://github.com/dewey/tbm/releases/download/v0.0.7/tbm_0.0.7_darwin_amd64.tar.gz"
-      sha256 "2d76aa385eafbbbf35ab2ae87c1eebfca84db8ca458cbeebdfc654d547a511d6"
+      url "https://github.com/dewey/tbm/releases/download/v0.0.6/tbm_0.0.6_Darwin_x86_64.tar.gz"
+      sha256 "4b65d62b59fe869701054a40b267ab29a8da155eb4c4a3df5a3ed180c4718e47"
 
       def install
         bin.install "tbm"
@@ -29,16 +29,16 @@ class Tbm < Formula
 
   on_linux do
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/dewey/tbm/releases/download/v0.0.7/tbm_0.0.7_linux_arm64.tar.gz"
-      sha256 "161cfaa94a1a10f53094e405214b549dc23b68f7915241c4c786ac2314fb3641"
+      url "https://github.com/dewey/tbm/releases/download/v0.0.6/tbm_0.0.6_Linux_arm64.tar.gz"
+      sha256 "e3e55c4d037f555b2ae609742b8070b70646082149102122ffd14d5dfc7c210c"
 
       def install
         bin.install "tbm"
       end
     end
     if Hardware::CPU.intel?
-      url "https://github.com/dewey/tbm/releases/download/v0.0.7/tbm_0.0.7_linux_amd64.tar.gz"
-      sha256 "68aebe155d14810c75775e174e9d4f31ef366f5e520c9cab1d1f34af86c520c9"
+      url "https://github.com/dewey/tbm/releases/download/v0.0.6/tbm_0.0.6_Linux_x86_64.tar.gz"
+      sha256 "cdab40b7baf237066ba6e325e3d40123f5a9d7ee4cc620218fdf200fb67b7bf9"
 
       def install
         bin.install "tbm"
