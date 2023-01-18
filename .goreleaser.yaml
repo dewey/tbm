@@ -9,6 +9,9 @@ builds:
     goos:
       - linux
       - darwin
+    goarch:
+      - amd64
+      - arm64
 archives:
   - replacements:
       darwin: Darwin
@@ -31,17 +34,6 @@ brews:
     # Name template of the recipe
     # Default to project name
     name: tbm
-
-    # GOARM to specify which 32-bit arm version to use if there are multiple
-    # versions from the build section. Brew formulas support only one 32-bit
-    # version.
-    # Default is 6 for all artifacts or each id if there a multiple versions.
-    goarm: 6
-
-    # GOAMD64 to specify which amd64 version to use if there are multiple
-    # versions from the build section.
-    # Default is v1.
-    goamd64: v3
 
     # NOTE: make sure the url_template, the token and given repo (github or
     # gitlab) owner and name are from the same kind.
@@ -80,7 +72,7 @@ brews:
 
     # Template of your app's description.
     # Default is empty.
-    description: "Software to create fast and easy drum rolls."
+    description: "A simple way to start multiple services like cloud-sql-proxy, IAP proxy, kubefwd or any other command really at once and keep them running in the background."
 
     # SPDX identifier of your app's license.
     # Default is empty.
